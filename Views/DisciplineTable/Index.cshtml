@@ -1,0 +1,91 @@
+@model IEnumerable<Project.Models.Parser.Discipline>
+
+
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Список Дисциплин</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #999;
+        }
+
+        .title {
+            text-align: left;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Список Дисциплин специальности</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Id</th>
+                <th class="title">Название</th>
+                <th>Экзамен 
+                    (№ семестра)</th>
+                <th>Зачет С/О 
+                    (№ семестра)</th>
+                <th>Зачет Б/О 
+                    (№ семестра)</th>
+                <th>Курсовая работа 
+                    (№ семестра)</th>
+                <th>Семестры</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                int ordinal = 1; // Порядковый номер
+                foreach (var discipline in Model)
+                {
+                    <tr>
+                        <td>@ordinal</td>
+                        <td>@discipline.Id</td>
+                        <td class="title">@discipline.Title</td>
+                        <td>@discipline.Exam</td>
+                        <td>@discipline.Score_mark</td>
+                        <td>@discipline.Score_no_mark</td>
+                        <td>@discipline.Coursework</td>
+                        <td>
+                            @if (discipline.Semesters != null && discipline.Semesters.Any())
+                            {
+                                <a href="@Url.Action("Index", "SemesterTable", new { disciplineId = discipline.Id })">Список семестров</a>
+                            }
+                            else
+                            {
+                                <div>Нет семестров</div>
+                            }
+                        </td>
+
+                    </tr>
+                    ordinal++;
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3">Нет дисциплин для отображения.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p>Всего дисциплин: @Model.Count()</p>
+</body>
+
+</html>

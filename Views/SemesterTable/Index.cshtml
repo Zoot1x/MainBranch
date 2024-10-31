@@ -1,0 +1,62 @@
+@model IEnumerable<Project.Models.Parser.Semester>
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>Список Семестров</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th,
+        td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #999;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <h1>Список Семестров</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>№</th> <!-- Порядковый номер -->
+                <th>Id</th>
+                <th>Семестры</th>
+                <th>Кол-во учебный часов</th>
+                <th>Кол-во СР часов</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                int ordinal = 1; // Порядковый номер
+                foreach (var semester in Model)
+                {
+                    <tr>
+                        <td>@ordinal</td>
+                        <td>@semester.Id</td>
+                        <td>@semester.Number семестр</td>
+                        <td>@semester.StudyHours</td>
+                        <td>@semester.SelfStudyHours</td>
+                    </tr>
+                    ordinal++; // Увеличиваем порядковый номер
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4">Нет семестров для отображения.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p>Всего семестров: @Model.Count()</p> <!-- Общее количество семестров -->
+</body>
+</html>

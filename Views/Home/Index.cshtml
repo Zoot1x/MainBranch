@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .main {
+            display: flex;
+            justify-content: space-between;
+            margin: 0; /* Убираем отступы по умолчанию */
+        }
+        .sidebar {
+            width: 500px; /* Ширина бокового блока */
+            background-color: #e7e7e7;
+            padding: 20px;
+            border: 2px solid var(--two-color);
+            border-radius: 30px;
+            text-align: center;
+        }
+        .content {
+            flex-grow: 1; /* Основное содержимое занимает оставшееся пространство */
+            padding: 20px; /* Отступы внутри основного блока */
+        }
+        .content h1 {
+            padding-bottom: 50px;
+        }
+        .circle {
+            width: 100px; /* Ширина круга */
+            height: 100px; /* Высота круга */
+            background-color: transparent;
+            border: 5px solid #76c7c0; /* Цвет и толщина краев */
+            border-radius: 50%; /* Делаем кругом */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 50px auto; /* Центрирование круга */
+        }
+    </style>
+</head>
+<div class="main">
+    <div class="content">
+        <h1>Дисциплины</h1>
+        <p>Математика</p>
+        <p>Физика</p>
+        <p>Физическая подготовка</p>
+    </div>
+    <div class="sidebar">
+        <h2>Успеваемость</h2>
+        <div class="circle"></div>
+    </div>
+</div>
+</html>
