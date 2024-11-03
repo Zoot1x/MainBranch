@@ -1,4 +1,4 @@
-@model IEnumerable<Project.Models.Parser.Speciality>
+@model IEnumerable<Project.Areas.Admin.Models.Parser.Speciality>
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -32,6 +32,7 @@
                 <th>Id</th>
                 <th class="title">Название</th>
                 <th>Дисциплины</th>
+                <th>Номер курса</th>
             </tr>
         </thead>
         <tbody>
@@ -47,6 +48,7 @@
                         <td>
                             <a href="@Url.Action("Index", "DisciplineTable", new { specialityId = speciality.Id })">Список дисциплин</a>
                         </td>
+                        <td>@speciality.KursNumber</td>
                     </tr>
                     ordinal++; 
                 }
@@ -59,6 +61,9 @@
             }
         </tbody>
     </table>
+    <div>
+        <p>Группы: <a href="Groups">перейти</a></p>
+    </div>
     <p>Всего Специальностей: @Model.Count()</p> <!-- Общее количество специальностей -->
 </body>
 </html>

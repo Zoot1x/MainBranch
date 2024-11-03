@@ -1,7 +1,7 @@
 
 
 using Microsoft.EntityFrameworkCore;
-using Project.Models.Parser;
+using Project.Areas.Admin.Models.Parser;
 
 namespace Project.Data.EF
 {
@@ -10,6 +10,7 @@ namespace Project.Data.EF
         public DbSet<Speciality>? Specialities { get; set; }
         public DbSet<Discipline>? Disciplines { get; set; }
         public DbSet<Semester>? Semesters { get; set; }
+        public DbSet<Group>? Groups {get; set;}
 
         public ParserDbContext(DbContextOptions<ParserDbContext> options) : base(options) 
         { 
@@ -25,6 +26,12 @@ namespace Project.Data.EF
                 .HasForeignKey(d => d.SpecialityId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Speciality>()
+                .HasMany(s => s.Groups)
+                .WithOne(d => d.Speciality)
+                .HasForeignKey(d => d.SpecialityId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Discipline>()
                 .HasMany(s => s.Semesters)
                 .WithOne(d => d.Discipline)
@@ -36,6 +43,8 @@ namespace Project.Data.EF
             modelBuilder.Entity<Discipline>().ToTable("Disciplines");
 
             modelBuilder.Entity<Semester>().ToTable("Semesters");
+
+            modelBuilder.Entity<Group>().ToTable("Groups");
 
         }   
     }

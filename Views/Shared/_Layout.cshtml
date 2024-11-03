@@ -1,5 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using Project.Models
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,6 +21,7 @@
         margin: 0;
         padding: 0;
     }
+
     .header {
         background-color: var(--five-color);
     }
@@ -26,40 +30,84 @@
         display: flex;
         color: var(--one-color);
     }
+
     .home h6 {
         padding-right: 20px;
         transition: all 1s;
     }
+
     .home i {
         transition: all 1s;
     }
-    .home:hover h6{
+
+    .home:hover h6 {
         color: var(--three-color);
     }
-    .home:hover i{
+
+    .home:hover i {
         color: var(--three-color);
     }
 </style>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3 header">
             <div class="container-fluid header">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-black" asp-area="" asp-controller="UploadExcel" asp-action="Index">Загрузить файл Excel</a>
+                            <a class="nav-link text-black" asp-area="" asp-controller="Home"
+                                asp-action="Index">Главная</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-black" asp-area="" asp-controller="SpecialityTable" asp-action="Index">Таблицы</a>
+                            <a class="nav-link text-black" asp-area="" asp-controller="UploadExcel"
+                                asp-action="Index">Загрузить файл Excel</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-black" asp-area="" asp-controller="SpecialityTable"
+                                asp-action="Index">Таблицы</a>
                         </li>
                     </ul>
-                    <a class="navbar-brand home" asp-area="" asp-controller="Home" asp-action="Index">
-                        <h6>Егор Денисов</h6>
-                        <i class="fa-solid fa-circle-user" style="font-size: x-large;"></i>
+                    @inject UserManager<User> UserManager
+
+
+                    @{
+
+                        User user = null;
+
+                        string userName = User.Identity.Name; // Получаем имя пользователя
+
+
+                        if (!string.IsNullOrEmpty(userName)) // Проверяем, не является ли имя пользователя пустым или null
+
+                        {
+
+                            user = UserManager.FindByNameAsync(userName).Result; // Получаем данные пользователя
+
+                        }
+
+                    }
+                    <a class="navbar-brand home" asp-area="" asp-controller="Profile" asp-action="Index">
+                        @if (user != null) // Если пользователь существует
+
+                        {
+                            <h6>@($"{user.Name} {user.LastName}")</h6>
+                            <i class="fa-solid fa-circle-user" style="font-size: x-large;"></i>
+                        }
+
+                        else
+
+                        {
+                            <a asp-controller="Account" asp-action="Login" class="navbar-brand home">
+                                <i class="fa-solid fa-pen-to-square" style="font-size: x-large; margin-right: 8px;"></i>
+                                <h6>Авторизироваться</h6>
+                            </a>
+
+                        }
                     </a>
                 </div>
             </div>
@@ -81,4 +129,5 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>

@@ -1,53 +1,59 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Дисциплины</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <style>
         .main {
             display: flex;
-            justify-content: space-between;
-            margin: 0; /* Убираем отступы по умолчанию */
+            flex-direction: column; /* Вертикальная компоновка */
+            align-items: flex-start; /* Выровнять по левому краю */
+            margin-top: 20px; /* Отступ сверху */
         }
-        .sidebar {
-            width: 500px; /* Ширина бокового блока */
-            background-color: #e7e7e7;
-            padding: 20px;
-            border: 2px solid var(--two-color);
-            border-radius: 30px;
-            text-align: center;
+
+        .card {
+            width: 100%; /* Ширина карточек */
+            max-width: 300px; /* Максимальная ширина карточки */
+            margin-bottom: 15px; /* Отступ между карточками */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Легкая тень для глубины */
         }
-        .content {
-            flex-grow: 1; /* Основное содержимое занимает оставшееся пространство */
-            padding: 20px; /* Отступы внутри основного блока */
-        }
-        .content h1 {
-            padding-bottom: 50px;
-        }
-        .circle {
-            width: 100px; /* Ширина круга */
-            height: 100px; /* Высота круга */
-            background-color: transparent;
-            border: 5px solid #76c7c0; /* Цвет и толщина краев */
-            border-radius: 50%; /* Делаем кругом */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 50px auto; /* Центрирование круга */
+
+        .card-body {
+            padding: 10px; /* Уменьшение отступов внутри карточки */
         }
     </style>
 </head>
-<div class="main">
-    <div class="content">
-        <h1>Дисциплины</h1>
-        <p>Математика</p>
-        <p>Физика</p>
-        <p>Физическая подготовка</p>
+
+<body>
+    <div class="container main">
+        <h2>Дисциплины для группы</h2>
+
+        @model IEnumerable<Project.Areas.Admin.Models.Parser.Discipline>
+
+        @if (Model != null && Model.Any())
+        {
+            foreach (var discipline in Model)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@discipline.Title</h5>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-warning" role="alert">
+                Дисциплины не найдены.
+            </div>
+        }
     </div>
-    <div class="sidebar">
-        <h2>Успеваемость</h2>
-        <div class="circle"></div>
-    </div>
-</div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
 </html>
