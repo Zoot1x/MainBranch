@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -6,6 +7,7 @@ using Project.ViewModels;
 
 namespace CustomIdentityApp.Controllers
 {
+    [AllowAnonymous]
     public class AccountController : Controller
     {
         private readonly UserManager<User> _userManager;
@@ -54,11 +56,19 @@ namespace CustomIdentityApp.Controllers
             }
             return View(model);
         }
-
+        
+        [Authorize]
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
             return View(new LoginViewModel { ReturnUrl = returnUrl });
+        }
+
+        [HttpGet]
+        public IActionResult AccessDenied(string returnUrl = null)
+        {
+            // Перенаправить на главную страницу вместо отображения пустой страницы
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]

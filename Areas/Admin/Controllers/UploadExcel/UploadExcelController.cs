@@ -4,6 +4,7 @@ using Project.Areas.Admin.Services.Interfaces;
 
 namespace Project.Areas.Admin.Controllers.UploadExcel
 {
+    [Authorize(Roles = "Admin")]
     public class UploadExcel : Controller
     {
         private readonly ISpecialityService _specialityService;

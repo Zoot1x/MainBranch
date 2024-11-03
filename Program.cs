@@ -44,6 +44,7 @@ builder
         opts.User.AllowedUserNameCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_"; // допустимые символы
     })
     .AddRoles<IdentityRole>()
+    .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<UserDbContext>();
 
 //------------------------------------------------------------------------//
@@ -70,6 +71,36 @@ builder.Services.AddScoped<IDisciplineService, DisciplineService>();
 //-----------------------------------------------------//
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    try
+    {
+        var context = services.GetRequiredService<UserDbContext>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        await SeedRoles(roleManager);
+    }
+    catch (Exception ex)
+    {
+        // Обработка ошибок и логирование
+    }
+}
+
+async Task SeedRoles(RoleManager<IdentityRole> roleManager)
+{
+    string[] roles = new string[] { "Admin", "User", "Moderator", "Teacher" };
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+}
+
+app.UseStatusCodePagesWithReExecute("/Account/AccessDenied");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

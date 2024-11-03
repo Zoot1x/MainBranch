@@ -6,6 +6,7 @@ using Project.Data.EF;
 
 namespace Project.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly IDisciplineRepository _disciplineRepository;
@@ -24,7 +25,6 @@ namespace Project.Controllers
             _disciplineRepository = disciplineRepository;
         }
 
-        [Authorize]
         public IActionResult Index()
         {
             var currentUser = _Usercontext.Users.FirstOrDefault(u =>

@@ -4,7 +4,7 @@ using Project.Areas.Admin.Repositories.Interfaces;
 
 namespace Project.Areas.Admin.Controllers.Table
 {
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin")]
     public class SpecialityTable : Controller
     {
         private readonly ISpecialityRepository _specialityRepository;

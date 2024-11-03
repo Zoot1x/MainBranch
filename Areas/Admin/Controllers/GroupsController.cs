@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Project.Data.EF;
 using Project.Areas.Admin.Models.Parser;
 
+[Authorize(Roles = "Admin")]
 public class GroupsController : Controller
 {
     private readonly ParserDbContext _context;
