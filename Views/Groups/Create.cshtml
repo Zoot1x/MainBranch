@@ -1,7 +1,8 @@
 @model Project.Areas.Admin.Models.Parser.Group
 @using Project.Areas.Admin.Models.Parser
 
-<h1>Create Group</h1>
+
+<h1>Создание учебной группы</h1>
 
 @if (TempData["SuccessMessage"] != null)
 
@@ -17,29 +18,29 @@
 
 <form asp-action="Create">
     <div class="form-group">
-        <label asp-for="Number"></label>
-        <input asp-for="Number" class="form-control" />
+        <label asp-for="Number">Номер группы</label>
+        <input asp-for="Number" class="form-control" placeholder="Например: 731"/>
         <span asp-validation-for="Number" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="CadetsNumber"></label>
-        <input asp-for="CadetsNumber" class="form-control" />
+        <label asp-for="CadetsNumber">Количество курсантов</label>
+        <input asp-for="CadetsNumber" class="form-control" placeholder="Например: 21"/>
         <span asp-validation-for="CadetsNumber" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Speciality"></label>
+        <label asp-for="Speciality">Выбрать специальность</label>
         <select asp-for="SpecialityId" class="form-control" asp-items="@(new SelectList(ViewBag.Specialities, "Id", "Title"))">
-            <option value="">Select Speciality</option>
+            <option value="">Выбрать специальность</option>
         </select>
 
         <span asp-validation-for="Speciality" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Create</button>
+    <button type="submit" class="btn btn-primary">Создать</button>
 </form>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Вернуться к списку</a>
 </div>
 
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>

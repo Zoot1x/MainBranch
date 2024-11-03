@@ -21,8 +21,6 @@ namespace Project.Areas.Admin.Controllers.Table
                 .Where(d => d.SpecialityId == specialityId)
                 .ToList();
 
-            // string disciplineTitle = _disciplineRepository.
-
             return View(disciplines);
         }
     }

@@ -1,36 +1,53 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Project.Data.EF;
 using Project.Models;
+using Project.ViewModels;
+using System.Linq;
 
 namespace Project.Controllers
 {
     [Authorize]
     public class ProfileController : Controller
     {
-        private readonly UserManager<User> _userManager; // Specify your user class here
+        private readonly UserDbContext _context;
 
-        public ProfileController(UserManager<User> userManager)
+        public ProfileController(UserDbContext context)
         {
-            _userManager = userManager;
+            _context = context;
         }
-        [Authorize]
-        public async Task<IActionResult> Index(string searchString)
-        {
-            var users = _userManager.Users.ToList(); // Получаем всех пользователей
 
-            // Фильтруем пользователей по строке поиска, если она есть
-            if (!string.IsNullOrEmpty(searchString))
+        public IActionResult Index()
+        {
+            var currentUser = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            if (currentUser == null)
             {
-                users = users.Where(u => u.UserName.Contains(searchString)).ToList();
+                return NotFound();
             }
 
-            bool isAdmin = User.IsInRole("Admin");
+            var profileViewModel = new ProfileViewModel
+            {
+                UserName = currentUser.UserName,
+                FirstName = currentUser.Name,
+                LastName = currentUser.LastName,
+                FatherName = currentUser.FatherName,
+                GroupNumber = currentUser.GroupNumber,
+                Role = GetRoleName(currentUser.Role)
+            };
 
-            ViewBag.isAdmin = isAdmin;
-
-            return View(users);
+            return View(profileViewModel);
         }
 
+        private string GetRoleName(Roles role)
+        {
+            return role switch
+            {
+                Roles.Cadet => "Курсант",
+                Roles.Teacher => "Преподаватель",
+                Roles.Moderator => "Модератор",
+                Roles.Admin => "Администратор",
+                _ => "Неизвестная роль"
+            };
+        }
     }
 }

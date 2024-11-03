@@ -1,5 +1,5 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using Project.Models
+﻿@using Project.Models
+@using System.Security.Claims
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,7 +23,7 @@
     }
 
     .header {
-        background-color: var(--five-color);
+        background-color: var(--four-color);
     }
 
     .home {
@@ -63,50 +63,33 @@
                             <a class="nav-link text-black" asp-area="" asp-controller="Home"
                                 asp-action="Index">Главная</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-black" asp-area="" asp-controller="UploadExcel"
-                                asp-action="Index">Загрузить файл Excel</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-black" asp-area="" asp-controller="SpecialityTable"
-                                asp-action="Index">Таблицы</a>
-                        </li>
-                    </ul>
-                    @inject UserManager<User> UserManager
-
-
-                    @{
-
-                        User user = null;
-
-                        string userName = User.Identity.Name; // Получаем имя пользователя
-
-
-                        if (!string.IsNullOrEmpty(userName)) // Проверяем, не является ли имя пользователя пустым или null
-
-                        {
-
-                            user = UserManager.FindByNameAsync(userName).Result; // Получаем данные пользователя
-
+                        @if (User.IsInRole("Admin")){
+                            <li class="nav-item">
+                                <a class="nav-link text-black" asp-area="" asp-controller="UploadExcel"
+                                    asp-action="Index">Загрузить файл Excel</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-black" asp-area="" asp-controller="SpecialityTable"
+                                    asp-action="Index">Таблицы</a>
+                            </li>
                         }
-
-                    }
+                    </ul>
                     <a class="navbar-brand home" asp-area="" asp-controller="Profile" asp-action="Index">
-                        @if (user != null) // Если пользователь существует
-
+                        @if (User.Identity.IsAuthenticated) // Проверка, авторизован ли пользователь
                         {
-                            <h6>@($"{user.Name} {user.LastName}")</h6>
+                            // Получаем имя и фамилию пользователя
+                            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+                            var userLastName = User.FindFirst(ClaimTypes.Surname)?.Value;
+
+                            <h6>@($"{userName} {userLastName}")</h6>
                             <i class="fa-solid fa-circle-user" style="font-size: x-large;"></i>
                         }
-
                         else
-
                         {
                             <a asp-controller="Account" asp-action="Login" class="navbar-brand home">
                                 <i class="fa-solid fa-pen-to-square" style="font-size: x-large; margin-right: 8px;"></i>
                                 <h6>Авторизироваться</h6>
                             </a>
-
                         }
                     </a>
                 </div>

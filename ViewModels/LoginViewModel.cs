@@ -6,16 +6,16 @@ namespace Project.ViewModels
     {
         [Required]
         [Display(Name = "Имя")]
-        public string UserName { get; set; }
+        public string? UserName { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Пароль")]
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
         [Display(Name = "Запомнить?")]
         public bool RememberMe { get; set; }
 
-        public string ReturnUrl { get; set; }
+        public string? ReturnUrl { get; set; }
     }
 }

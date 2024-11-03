@@ -1,37 +1,25 @@
-@using Microsoft.AspNetCore.Identity
-@using Project.Models
-@model User
+@model Project.Areas.Admin.ViewModels.EditRolesViewModel
 
-@{
-    ViewData["Title"] = "Редактирование ролей";
-}
+<h2>Редактирование ролей для пользователя @Model.UserName</h2>
 
-<div class="container mt-4">
-    <h2>@ViewData["Title"] для @Model.UserName</h2>
-    @inject UserManager<User> UserManager
-    <form method="post" action="@Url.Action("UpdateRoles", "Admin")">
-        <input type="hidden" name="userId" value="@Model.Id" />
-        <div class="form-group">
-            <label>Выберите роли:</label>
-            <div>
+<form asp-action="UpdateRoles" method="post">
+    <input type="hidden" name="userId" value="@Model.UserId" />
+
+    <div class="form-group">
+        <label>Выберите роль:</label>
+        <div class="d-flex flex-column">
+            @foreach (var role in Model.AllRoles)
+            {
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="roleNames" value="Admin" id="roleAdmin" @(await UserManager.IsInRoleAsync(Model, "Admin") ? "checked" : "")>
-                    <label class="form-check-label" for="roleAdmin">Админ</label>
+                    <input class="form-check-input" type="radio" name="roleNames" value="@role"
+                           @(Model.AssignedRoles.Contains(role) ? "checked" : "") id="role_@role">
+                    <label class="form-check-label" for="role_@role">@role</label>
                 </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="roleNames" value="User" id="roleUser" @(await UserManager.IsInRoleAsync(Model, "User") ? "checked" : "")>
-                    <label class="form-check-label" for="roleUser">Курсант</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="roleNames" value="Moderator" id="roleModerator" @(await UserManager.IsInRoleAsync(Model, "Moderator") ? "checked" : "")>
-                    <label class="form-check-label" for="roleModerator">Модератор</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="roleNames" value="Teacher" id="roleTeacher" @(await UserManager.IsInRoleAsync(Model, "Teacher") ? "checked" : "")>
-                    <label class="form-check-label" for="roleTeacher">Преподаватель</label>
-                </div>
-            </div>
+            }
         </div>
-        <button type="submit" class="btn btn-primary">Обновить роли</button>
-    </form>
-</div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Обновить роли</button>
+</form>
+
+<a asp-action="Index" class="btn btn-secondary">Назад</a>

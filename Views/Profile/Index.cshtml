@@ -1,62 +1,29 @@
-@using Microsoft.AspNetCore.Identity
-@using Project.Models
+@model Project.ViewModels.ProfileViewModel
 
-@inject UserManager<User> UserManager
 @{
-    var user = UserManager.FindByNameAsync(@User.Identity.Name).Result;
+    ViewData["Title"] = "Профиль";
 }
 
-<!DOCTYPE html>
-<html lang="en">
+<div class="container mt-4">
+    <h2>Профиль пользователя</h2>
+    <div class="card">
+        <div class="card-body">
+            <p class="card-text"><strong>Логин:</strong> @Model.UserName</p>
+            <p class="card-text"><strong>Имя:</strong> @Model.FirstName</p>
+            <p class="card-text"><strong>Фамилия:</strong> @Model.LastName</p>
+            <p class="card-text"><strong>Отчество:</strong> @Model.FatherName</p>
+            <p class="card-text"><strong>Номер группы:</strong> @Model.GroupNumber</p>
+            <p class="card-text"><strong>Роль:</strong> @Model.Role</p>
 
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Профиль пользователя</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-</head>
+            @if (User.IsInRole("Admin"))
+            {
+                <a href="@Url.Action("Index", "Admin")" class="btn btn-warning">Управление пользователями</a>
+            }
 
-<body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header text-center">
-                        <h3>Профиль пользователя</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="text-center mb-4">
-                            <i class="fa-solid fa-user-circle" style="font-size: 80px;"></i>
-                        </div>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><strong>Логин:</strong> @user.UserName</li>
-                            <li class="list-group-item"><strong>Имя:</strong> @user.Name</li>
-                            <li class="list-group-item"><strong>Фамилия:</strong> @user.LastName</li>
-                            <li class="list-group-item"><strong>Отчество:</strong> @user.FatherName</li>
-                            <li class="list-group-item"><strong>Номер учебной группы:</strong> @user.GroupNumber</li>
-                            @if (ViewBag.IsAdmin)
-                            {
-                                <div class="card-footer text-center">
-                                    <form asp-area="" asp-controller="Admin" asp-action="Index">
-                                        <button type="submit" class="btn btn-warning">Управление пользователями</button>
-                                    </form>
-                                </div>
-                            }
-                        </ul>
-                    </div>
-                    <div class="card-footer text-center">
-                        <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">
-                            <button type="submit" class="btn btn-danger">Выйти</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+            <!-- Кнопка выхода -->
+            <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-danger">Выход</button>
+            </form>
         </div>
     </div>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+</div>

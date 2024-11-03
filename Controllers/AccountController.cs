@@ -1,7 +1,10 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore;
+using Project.Data.EF;
 using Project.Models;
 using Project.ViewModels;
 
@@ -10,13 +13,11 @@ namespace CustomIdentityApp.Controllers
     [AllowAnonymous]
     public class AccountController : Controller
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
+        private readonly UserDbContext _context;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(UserDbContext context)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _context = context;
         }
 
         [HttpGet]
@@ -28,85 +29,110 @@ namespace CustomIdentityApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                User user = new User
-                {
-                    UserName = model.UserName,
-                    Name = model.Name,
-                    LastName = model.LastName,
-                    FatherName = model.FatherName,
-                    GroupNumber = model.GroupNumber,
-                };
-                // добавляем пользователя
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    // установка куки
-                    await _signInManager.SignInAsync(user, false);
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
-                }
+                return View(model);
             }
-            return View(model);
+
+            // Проверка на существование пользователя с таким именем
+            if (await _context.Users.AnyAsync(u => u.UserName == model.UserName))
+            {
+                ModelState.AddModelError("", "Пользователь с таким именем уже существует");
+                return View(model);
+            }
+
+            // Создаем нового пользователя с данными из модели
+            var newUser = new User
+            {
+                UserName = model.UserName,
+                Name = model.Name,
+                LastName = model.LastName,
+                FatherName = model.FatherName,
+                GroupNumber = model.GroupNumber,
+                Password = model.Password,
+                Role = Roles.Cadet // Назначаем роль Cadet
+                ,
+            };
+
+            // Добавляем пользователя в базу данных
+            _context.Users.Add(newUser);
+            await _context.SaveChangesAsync();
+
+            // Создаем клеймы для аутентификации
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, newUser.UserName),
+                new Claim(ClaimTypes.Role, newUser.Role.ToString()),
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, "CookieAuth");
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(60),
+            };
+
+            // Вход нового пользователя
+            await HttpContext.SignInAsync(
+                "CookieAuth",
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties
+            );
+
+            return RedirectToAction("Index", "Home");
         }
-        
-        [Authorize]
+
+        //<<-------------------------Логирование---------------------->>
+
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
-        [HttpGet]
-        public IActionResult AccessDenied(string returnUrl = null)
-        {
-            // Перенаправить на главную страницу вместо отображения пустой страницы
-            return RedirectToAction("Index", "Home");
-        }
-
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            var result = await _signInManager.PasswordSignInAsync(
-                model.UserName,
-                model.Password,
-                model.RememberMe,
-                false
-            );
-            if (result.Succeeded)
+            if (!ModelState.IsValid)
             {
-                // проверяем, принадлежит ли URL приложению
-                if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                {
-                    return Redirect(model.ReturnUrl);
-                }
-                else
-                {
-                    return RedirectToAction("Index", "Home");
-                }
-            }
-            else
-            {
-                ModelState.AddModelError("", "Неправильный логин и (или) пароль");
+                return View(model);
             }
 
-            return View(model);
+            // Проверяем, существует ли пользователь
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == model.UserName);
+            if (user == null || user.Password != model.Password)
+            {
+                ModelState.AddModelError("", "Неверное имя пользователя или пароль");
+                return View(model);
+            }
+
+            // Создаем клеймы для аутентификации
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, "CookieAuth");
+            var authProperties = new AuthenticationProperties { IsPersistent = model.RememberMe };
+
+            // Вход пользователя
+            await HttpContext.SignInAsync(
+                "CookieAuth", // Используйте "CookieAuth"
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties
+            );
+
+            // Перенаправление на ReturnUrl или домашнюю страницу
+            return !string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl)
+                ? Redirect(model.ReturnUrl)
+                : RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            // удаляем аутентификационные куки
-            await _signInManager.SignOutAsync();
+            await HttpContext.SignOutAsync("CookieAuth");
             return RedirectToAction("Index", "Home");
         }
     }

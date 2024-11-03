@@ -1,70 +1,73 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Project.Areas.Admin.ViewModels;
+using Project.Data.EF;
 using Project.Models;
 
 [Authorize(Roles = "Admin")]
 public class AdminController : Controller
 {
-    private readonly UserManager<User> _userManager;
+    private readonly UserDbContext _context;
 
-    public AdminController(UserManager<User> userManager)
+    public AdminController(UserDbContext context)
     {
-        _userManager = userManager;
+        _context = context;
     }
 
-    public async Task<IActionResult> Index(string searchString)
+    public async Task<IActionResult> Index()
     {
-        var users = _userManager.Users.AsQueryable();
-
-        if (!string.IsNullOrEmpty(searchString))
-        {
-            users = users.Where(u => u.UserName.Contains(searchString));
-        }
-
-        return View(await users.ToListAsync());
+        var users = await _context.Users.ToListAsync(); // Получаем список пользователей из базы данных
+        return View(users); // Передаем список пользователей в представление
     }
 
-    public async Task<IActionResult> EditRoles(string userId)
+    public async Task<IActionResult> EditRoles(int userId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        // Получаем пользователя по его ID
+        var user = await _context.Users.FindAsync(userId);
         if (user == null)
         {
             return NotFound();
         }
 
-        return View(user);
+        // Получаем список всех ролей
+        var allRoles = Enum.GetNames(typeof(Roles)).ToList();
+
+        // Создаем модель для представления
+        var model = new EditRolesViewModel
+        {
+            UserId = userId,
+            UserName = user.UserName,
+            AssignedRoles = user.Role.ToString(), // Преобразуем роль в строку для отображения
+            AllRoles = allRoles,
+        };
+
+        return View(model);
     }
 
     [HttpPost]
-    public async Task<IActionResult> UpdateRoles(string userId, List<string> roleNames)
+    public async Task<IActionResult> UpdateRoles(int userId, List<string> roleNames)
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        // Получаем пользователя по его ID
+        var user = await _context.Users.FindAsync(userId);
         if (user == null)
         {
             return NotFound();
         }
 
-        var currentRoles = await _userManager.GetRolesAsync(user);
-
-        // Удаляем роли, которые не выбраны
-        foreach (var role in currentRoles)
+        // Обновляем роль пользователя на основе выбранных ролей
+        if (roleNames.Any())
         {
-            if (!roleNames.Contains(role))
-            {
-                await _userManager.RemoveFromRoleAsync(user, role);
-            }
+            // В данном примере просто назначаем первую выбранную роль
+            user.Role = (Roles)Enum.Parse(typeof(Roles), roleNames.First());
+        }
+        else
+        {
+            // Если роли не выбраны, можно установить роль по умолчанию
+            user.Role = Roles.Cadet; // или другая роль по умолчанию
         }
 
-        // Добавляем новые роли
-        foreach (var role in roleNames)
-        {
-            if (!currentRoles.Contains(role))
-            {
-                await _userManager.AddToRoleAsync(user, role);
-            }
-        }
+        await _context.SaveChangesAsync(); // Сохраняем изменения в базе данных
 
         return RedirectToAction("Index");
     }

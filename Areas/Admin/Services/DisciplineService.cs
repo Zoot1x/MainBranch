@@ -1,19 +1,11 @@
 using OfficeOpenXml;
 using Project.Areas.Admin.Models.Parser;
-using Project.Areas.Admin.Repositories.Interfaces;
 using Project.Areas.Admin.Services.Interfaces;
 
 namespace Project.Areas.Admin.Services
 {
     public class DisciplineService : IDisciplineService
     {
-        private readonly IDisciplineRepository _disciplineRepository;
-
-        public DisciplineService(IDisciplineRepository disciplineRepository)
-        {
-            _disciplineRepository = disciplineRepository;
-        }
-
         public List<Discipline> ProcessDisciplines(ExcelWorksheet worksheet, int startRow)
         {
             var disciplines = new List<Discipline>();
@@ -28,7 +20,7 @@ namespace Project.Areas.Admin.Services
 
             for (int row = startRow; row <= worksheet.Dimension.End.Row; row++)
             {
-                // Ваша логика обработки дисциплин
+                
                 var disciplineTitle = worksheet.Cells[row, 3].Text;
                 if (disciplineTitle == "Физическая подготовка*")
                     disciplineTitle = "Физическая подготовка";
@@ -226,16 +218,13 @@ namespace Project.Areas.Admin.Services
                         }
                         break;
                 }
-
                 if (studyHours > 0 || selfStudyHours > 0)
                 {
                     semesters.Add(
                         new Semester
                         {
                             Number = sem,
-
                             StudyHours = studyHours,
-
                             SelfStudyHours = selfStudyHours,
                         }
                     );

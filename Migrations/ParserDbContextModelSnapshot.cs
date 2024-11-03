@@ -19,7 +19,7 @@ namespace Project.Migrations
                 .HasAnnotation("ProductVersion", "6.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("Project.Models.Parser.Discipline", b =>
+            modelBuilder.Entity("Project.Areas.Admin.Models.Parser.Discipline", b =>
                 {
                     b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
@@ -50,7 +50,7 @@ namespace Project.Migrations
                     b.ToTable("Disciplines", (string)null);
                 });
 
-            modelBuilder.Entity("Project.Models.Parser.Group", b =>
+            modelBuilder.Entity("Project.Areas.Admin.Models.Parser.Group", b =>
                 {
                     b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
@@ -72,7 +72,7 @@ namespace Project.Migrations
                     b.ToTable("Groups", (string)null);
                 });
 
-            modelBuilder.Entity("Project.Models.Parser.Semester", b =>
+            modelBuilder.Entity("Project.Areas.Admin.Models.Parser.Semester", b =>
                 {
                     b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
@@ -97,7 +97,7 @@ namespace Project.Migrations
                     b.ToTable("Semesters", (string)null);
                 });
 
-            modelBuilder.Entity("Project.Models.Parser.Speciality", b =>
+            modelBuilder.Entity("Project.Areas.Admin.Models.Parser.Speciality", b =>
                 {
                     b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
@@ -114,9 +114,9 @@ namespace Project.Migrations
                     b.ToTable("Specialities", (string)null);
                 });
 
-            modelBuilder.Entity("Project.Models.Parser.Discipline", b =>
+            modelBuilder.Entity("Project.Areas.Admin.Models.Parser.Discipline", b =>
                 {
-                    b.HasOne("Project.Models.Parser.Speciality", "Speciality")
+                    b.HasOne("Project.Areas.Admin.Models.Parser.Speciality", "Speciality")
                         .WithMany("Disciplines")
                         .HasForeignKey("SpecialityId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -124,9 +124,9 @@ namespace Project.Migrations
                     b.Navigation("Speciality");
                 });
 
-            modelBuilder.Entity("Project.Models.Parser.Group", b =>
+            modelBuilder.Entity("Project.Areas.Admin.Models.Parser.Group", b =>
                 {
-                    b.HasOne("Project.Models.Parser.Speciality", "Speciality")
+                    b.HasOne("Project.Areas.Admin.Models.Parser.Speciality", "Speciality")
                         .WithMany("Groups")
                         .HasForeignKey("SpecialityId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -134,9 +134,9 @@ namespace Project.Migrations
                     b.Navigation("Speciality");
                 });
 
-            modelBuilder.Entity("Project.Models.Parser.Semester", b =>
+            modelBuilder.Entity("Project.Areas.Admin.Models.Parser.Semester", b =>
                 {
-                    b.HasOne("Project.Models.Parser.Discipline", "Discipline")
+                    b.HasOne("Project.Areas.Admin.Models.Parser.Discipline", "Discipline")
                         .WithMany("Semesters")
                         .HasForeignKey("DisciplineId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -144,12 +144,12 @@ namespace Project.Migrations
                     b.Navigation("Discipline");
                 });
 
-            modelBuilder.Entity("Project.Models.Parser.Discipline", b =>
+            modelBuilder.Entity("Project.Areas.Admin.Models.Parser.Discipline", b =>
                 {
                     b.Navigation("Semesters");
                 });
 
-            modelBuilder.Entity("Project.Models.Parser.Speciality", b =>
+            modelBuilder.Entity("Project.Areas.Admin.Models.Parser.Speciality", b =>
                 {
                     b.Navigation("Disciplines");
 

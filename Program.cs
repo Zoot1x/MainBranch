@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql;
 using Project.Areas.Admin.Repositories;
@@ -10,7 +10,17 @@ using Project.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
+
+
+builder.Services.AddScoped<IDisciplineRepository, DisciplineRepository>();
+builder.Services.AddScoped<ISpecialityRepository, SpecialityRepository>();
+builder.Services.AddScoped<ISemesterRepository, SemesterRepository>();
+
+builder.Services.AddScoped<IDisciplineService, DisciplineService>();
+builder.Services.AddScoped<ISpecialityService, SpecialityService>();
+
+
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
 //---------------------------Подключение к БД Парсера--------------------//
 
@@ -21,10 +31,6 @@ builder.Services.AddDbContext<ParserDbContext>(options =>
     )
 );
 
-//-----------------------------------------------------------------------//
-
-//-------------------Работа с Idenity-------------------------//
-
 builder.Services.AddDbContext<UserDbContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("Users"),
@@ -32,75 +38,24 @@ builder.Services.AddDbContext<UserDbContext>(options =>
     )
 );
 
-builder
-    .Services.AddIdentity<User, IdentityRole>(opts =>
+//-----------------------------------------------------------------------//
+
+builder.Services.AddAuthentication("CookieAuth")
+    .AddCookie("CookieAuth", options =>
     {
-        opts.Password.RequiredLength = 5; // минимальная длина
-        opts.Password.RequireNonAlphanumeric = false; // требуются ли не алфавитно-цифровые символы
-        opts.Password.RequireLowercase = false; // требуются ли символы в нижнем регистре
-        opts.Password.RequireUppercase = false; // требуются ли символы в верхнем регистре
-        opts.Password.RequireDigit = false; // требуются ли цифры
-        opts.User.RequireUniqueEmail = false; // уникальный email
-        opts.User.AllowedUserNameCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_"; // допустимые символы
-    })
-    .AddRoles<IdentityRole>()
-    .AddDefaultTokenProviders()
-    .AddEntityFrameworkStores<UserDbContext>();
+        options.LoginPath = "/Account/Login"; // путь к странице логина
+        options.AccessDeniedPath = "/Account/AccessDenied"; // путь к странице отказа в доступе
+        options.Cookie.Name = "UserAuthCookie"; // имя куки
+    });
 
-//------------------------------------------------------------------------//
-
-builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
-
-//------------------------------Репозитории---------------------------//
-builder.Services.AddScoped<ISpecialityRepository, SpecialityRepository>();
-builder.Services.AddScoped<IDisciplineRepository, DisciplineRepository>();
-builder.Services.AddScoped<ISemesterRepository, SemesterRepository>();
-
-//------------------------------------------------------------------------//
-
-//-----------------------------------Сервисы------------------------//
-builder.Services.AddScoped<ISpecialityService, SpecialityService>();
-builder.Services.AddScoped<IDisciplineService, DisciplineService>();
-
-//------------------------------------------------------------------------//
+builder.Services.AddAuthorization();
 
 
-//---------------------Роли--------------------------//
-
-
-//-----------------------------------------------------//
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
 
-    try
-    {
-        var context = services.GetRequiredService<UserDbContext>();
-        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        await SeedRoles(roleManager);
-    }
-    catch (Exception ex)
-    {
-        // Обработка ошибок и логирование
-    }
-}
-
-async Task SeedRoles(RoleManager<IdentityRole> roleManager)
-{
-    string[] roles = new string[] { "Admin", "User", "Moderator", "Teacher" };
-    foreach (var role in roles)
-    {
-        if (!await roleManager.RoleExistsAsync(role))
-        {
-            await roleManager.CreateAsync(new IdentityRole(role));
-        }
-    }
-}
-
-app.UseStatusCodePagesWithReExecute("/Account/AccessDenied");
+// app.UseStatusCodePagesWithReExecute("/Account/AccessDenied");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
