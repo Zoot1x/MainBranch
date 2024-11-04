@@ -1,12 +1,13 @@
-@model IEnumerable<Project.Areas.Admin.Models.Parser.Discipline>
-
+@model Project.Areas.Admin.ViewModels.DisciplineTableViewModel
+@{
+    ViewData["Title"] = $"Список дисциплин - {@Model.SpecialityTitle}";
+}
 
 <!DOCTYPE html>
 <html lang="ru">
 
 <head>
     <meta charset="utf-8" />
-    <title>Список Дисциплин</title>
     <style>
         table {
             width: 100%;
@@ -30,7 +31,8 @@
 </head>
 
 <body>
-    <h1>Список Дисциплин специальности</h1>
+    <h1>Список дисциплин специальности <strong>@Model.SpecialityTitle</strong></h1>
+    <button onclick="history.back()" class="mb-3 mt-3 btn btn-outline-secondary btn-sm"><i class="fa-solid fa-arrow-left"></i> Назад</button>
     <table border="1">
         <thead>
             <tr>
@@ -49,10 +51,10 @@
             </tr>
         </thead>
         <tbody>
-            @if (Model != null && Model.Any())
+            @if (Model.Disciplines != null && Model.Disciplines.Any())
             {
                 int ordinal = 1; // Порядковый номер
-                foreach (var discipline in Model)
+                foreach (var discipline in Model.Disciplines)
                 {
                     <tr>
                         <td>@ordinal</td>
@@ -85,7 +87,7 @@
             }
         </tbody>
     </table>
-    <p>Всего дисциплин: @Model.Count()</p>
+    <p>Всего дисциплин: @Model.Disciplines.Count()</p>
 </body>
 
 </html>

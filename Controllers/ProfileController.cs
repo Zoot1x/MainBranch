@@ -32,6 +32,8 @@ namespace Project.Controllers
                 LastName = currentUser.LastName,
                 FatherName = currentUser.FatherName,
                 GroupNumber = currentUser.GroupNumber,
+                KursNumber = currentUser.KusrNumber,
+                CurrentSemestr = currentUser.CurrentSemester,
                 Role = GetRoleName(currentUser.Role)
             };
 
@@ -46,7 +48,7 @@ namespace Project.Controllers
                 Roles.Teacher => "Преподаватель",
                 Roles.Moderator => "Модератор",
                 Roles.Admin => "Администратор",
-                _ => "Неизвестная роль"
+                _ => "Неизвестная должность"
             };
         }
     }

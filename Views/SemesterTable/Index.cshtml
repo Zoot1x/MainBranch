@@ -1,5 +1,7 @@
-@model IEnumerable<Project.Areas.Admin.Models.Parser.Semester>
-
+@model Project.Areas.Admin.ViewModels.SemesterTableViewModel
+@{
+    ViewData["Title"] = $"Список семестров - {@Model.DisciplineTitle}";
+}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -22,7 +24,8 @@
     </style>
 </head>
 <body>
-    <h1>Список Семестров</h1>
+    <h1>Список семестров дисциплины <strong>@Model.DisciplineTitle</strong></h1>
+    <button onclick="history.back()" class="mb-3 mt-3 btn btn-outline-secondary btn-sm"><i class="fa-solid fa-arrow-left"></i> Назад</button>
     <table border="1">
         <thead>
             <tr>
@@ -34,10 +37,10 @@
             </tr>
         </thead>
         <tbody>
-            @if (Model != null && Model.Any())
+            @if (Model.Semesters != null && Model.Semesters.Any())
             {
                 int ordinal = 1; // Порядковый номер
-                foreach (var semester in Model)
+                foreach (var semester in Model.Semesters)
                 {
                     <tr>
                         <td>@ordinal</td>
@@ -57,6 +60,6 @@
             }
         </tbody>
     </table>
-    <p>Всего семестров: @Model.Count()</p> <!-- Общее количество семестров -->
+    <p>Всего семестров: @Model.Semesters.Count()</p> <!-- Общее количество семестров -->
 </body>
 </html>

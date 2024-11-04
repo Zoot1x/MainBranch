@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Список групп";
 }
-
+<button onclick="history.back()" class="mb-3 mt-3 btn btn-outline-secondary btn-sm"><i class="fa-solid fa-arrow-left"></i> Назад</button>
 <h1>Список групп</h1>
 
 <table class="table">
@@ -23,12 +23,11 @@
                 <td>@group.Number</td>
                 <td>@group.CadetsNumber</td>
                 <td>@group.Speciality?.Title</td> <!-- Предположим, у вас есть свойство Name в Speciality -->
-                <td>@group.SpecialityId</td> <!-- Добавлено для отладки -->
             </tr>
         }
     </tbody>
 </table>
-<a href="@Url.Action("Create", "Groups")" class="btn btn-primary">
-    Создать
+<a href="@Url.Action("Create", "Groups")" class="btn btn-outline-primary">
+    Добавить новую группу
 </a>
 

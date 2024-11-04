@@ -28,20 +28,38 @@ namespace Project.Areas.Admin.Controllers.UploadExcel
         public ActionResult ClearTable()
         {
             _specialityService.ClearAll();
-            // _disciplineService.ClearAll();
+            TempData["ClearAccess"] = "Успешно очищенно";
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public IActionResult Index(IFormFile file)
         {
-            if (file != null && file.Length > 0)
+            if (file == null || file.Length == 0)
             {
-                _specialityService.UploadExcel(file);
+                TempData["FileError"] = "Вы не выбрали файл";
                 return RedirectToAction("Index");
             }
 
-            return View();
+            // Проверка расширения файла
+            if (!file.FileName.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase))
+            {
+                TempData["FileError"] = "Файл должен иметь расширение .xlsx.";
+                return RedirectToAction("Index");
+            }
+
+            bool isUploaded = _specialityService.UploadExcel(file);
+
+            if (!isUploaded)
+            {
+                TempData["SpecialityExists"] = "Такой файл уже существует.";
+            }
+            else
+            {
+                TempData["UploadSuccess"] = "Файл успешно загружен.";
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }

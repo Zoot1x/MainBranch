@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Project</title>
+    <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/variables.css" asp-append-version="true" />
@@ -14,97 +14,95 @@
     <link href="~/fontawesome/css/fontawesome.css" rel="stylesheet" />
     <link href="~/fontawesome/css/brands.css" rel="stylesheet" />
     <link href="~/fontawesome/css/solid.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="~/favicon.ico" rel="icon" type="image/x-icon">
 </head>
 
 <style>
-    * {
-        margin: 0;
-        padding: 0;
+    .btn-logging {
+        margin-right: 5px;
     }
 
-    .header {
-        background-color: var(--four-color);
-    }
-
-    .home {
+    .profile_bar {
         display: flex;
-        color: var(--one-color);
+        justify-content: center;
+        align-items: center;
+        color: black;
+        transition: all .2s;
     }
 
-    .home h6 {
-        padding-right: 20px;
-        transition: all 1s;
+    .profile_bar i {
+        font-size: 20px;
     }
 
-    .home i {
-        transition: all 1s;
+    .profile_bar a {
+        color: black;
+        transition: all .2s;
     }
 
-    .home:hover h6 {
-        color: var(--three-color);
+    .profile_bar:hover {
+        color: #4f4f4f;
+        /* Цвет текста при наведении */
     }
-
-    .home:hover i {
-        color: var(--three-color);
+    .profile_bar:hover a{
+        color: #4f4f4f;
+        /* Цвет текста при наведении */
     }
 </style>
 
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3 header">
-            <div class="container-fluid header">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-black" asp-area="" asp-controller="Home"
-                                asp-action="Index">Главная</a>
-                        </li>
-                        @if (User.IsInRole("Admin")){
-                            <li class="nav-item">
-                                <a class="nav-link text-black" asp-area="" asp-controller="UploadExcel"
-                                    asp-action="Index">Загрузить файл Excel</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-black" asp-area="" asp-controller="SpecialityTable"
-                                    asp-action="Index">Таблицы</a>
-                            </li>
-                        }
-                    </ul>
-                    <a class="navbar-brand home" asp-area="" asp-controller="Profile" asp-action="Index">
-                        @if (User.Identity.IsAuthenticated) // Проверка, авторизован ли пользователь
-                        {
-                            // Получаем имя и фамилию пользователя
-                            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
-                            var userLastName = User.FindFirst(ClaimTypes.Surname)?.Value;
-
-                            <h6>@($"{userName} {userLastName}")</h6>
-                            <i class="fa-solid fa-circle-user" style="font-size: x-large;"></i>
-                        }
-                        else
-                        {
-                            <a asp-controller="Account" asp-action="Login" class="navbar-brand home">
-                                <i class="fa-solid fa-pen-to-square" style="font-size: x-large; margin-right: 8px;"></i>
-                                <h6>Авторизироваться</h6>
-                            </a>
-                        }
-                    </a>
-                </div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <img style="width: 30px; margin-right: 10px;" src="~/image/logo.png" alt="">
+            <a class="navbar-brand" href="@Url.Action("Index", "Home")">ЯВВУ ПВО</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Портал ЯВВУ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Портфолио</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Расписание</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Электронная Библиотека</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
-    </header>
+            <div class="ml-auto d-flex align-items-center">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <span class="mr-3">
+                        <div class="profile_bar">
+                            <i class="fa-regular fa-circle-user" style="margin-right: 10px;"></i>
+                            <a style="text-decoration: none;" asp-controller="Profile"
+                                asp-action="Index"><strong>@User.Identity.Name</strong></a>
+                        </div>
+                    </span>
+                }
+                else
+                {
+                    <a class="btn btn-outline-primary btn-logging btn-sm" href="@Url.Action("Login", "Account")">Вход</a>
+                    <a class="btn btn-outline-primary btn-register btn-sm" href="@Url.Action("Register", "Account")">Регистрация</a>
+                }
+            </div>
+        </div>
+    </nav>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - Project - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="bg-light text-center text-lg-start mt-4">
+        <div class="text-center p-3">
+            © 2024 ЯВВУ ПВО. Все права защищены.
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

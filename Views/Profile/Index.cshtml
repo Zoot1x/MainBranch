@@ -1,29 +1,137 @@
 @model Project.ViewModels.ProfileViewModel
-
 @{
-    ViewData["Title"] = "Профиль";
+    ViewData["Title"] = "Личный профиль";
 }
 
-<div class="container mt-4">
-    <h2>Профиль пользователя</h2>
-    <div class="card">
-        <div class="card-body">
-            <p class="card-text"><strong>Логин:</strong> @Model.UserName</p>
-            <p class="card-text"><strong>Имя:</strong> @Model.FirstName</p>
-            <p class="card-text"><strong>Фамилия:</strong> @Model.LastName</p>
-            <p class="card-text"><strong>Отчество:</strong> @Model.FatherName</p>
-            <p class="card-text"><strong>Номер группы:</strong> @Model.GroupNumber</p>
-            <p class="card-text"><strong>Роль:</strong> @Model.Role</p>
+<style>
+    .profile {
+        display: flex;
+        justify-content: space-between;
+    }
 
-            @if (User.IsInRole("Admin"))
-            {
-                <a href="@Url.Action("Index", "Admin")" class="btn btn-warning">Управление пользователями</a>
-            }
+    .user-profile {
+        border: 2px black solid;
+        border-radius: 10px;
+        padding: 20px;
+        width: 200%;
+        background-color: rgb(238, 238, 238);
+    }
 
-            <!-- Кнопка выхода -->
-            <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
-                <button type="submit" class="btn btn-danger">Выход</button>
-            </form>
+    .user-main-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 50px;
+    }
+
+    .user-main-info img {
+        margin-right: 20px;
+    }
+
+    .user-info {}
+
+    .info-item {
+        display: flex;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        align-items: center;
+        padding: 5px;
+        margin-bottom: 10px;
+    }
+
+    .info-item strong {
+        margin-right: 10px;
+    }
+
+    .admin-box {
+        margin-left: 30px;
+        width: 100%;
+        border: 2px black solid;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        flex-direction: column;
+    }
+
+    .admin-controll {
+        margin-top: 70px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .admin-controll-item {
+        margin-bottom: 30px;
+    }
+
+    .btn-logout {
+        margin-top: 50px;
+    }
+</style>
+
+<div class="container mt-5">
+
+    <div class="profile">
+        <div class="user-profile">
+            <div class="user-main-info">
+                <img style="width: 100px;" src="~/image/profile/user.jpg" alt="">
+                <h3><strong>@Model.LastName @Model.FirstName @Model.FatherName</strong></h3>
+            </div>
+            <div class="user-info">
+                <div class="info-item">
+                    <strong>Имя:</strong>
+                    <span>@Model.FirstName</span>
+                </div>
+                <div class="info-item">
+                    <strong>Фамилия:</strong>
+                    <span>@Model.LastName</span>
+                </div>
+                <div class="info-item">
+                    <strong>Отчество:</strong>
+                    <span>@Model.FatherName</span>
+                </div>
+                <div class="info-item">
+                    <strong>Должность:</strong>
+                    <span>@Model.Role</span>
+                </div>
+                <div class="info-item">
+                    <strong>Номер учебной группы:</strong>
+                    <span>@Model.GroupNumber</span>
+                </div>
+                <div class="info-item">
+                    <strong>Курс обучения:</strong>
+                    <span>@Model.KursNumber</span>
+                </div>
+                <div class="info-item">
+                    <strong>Семетр обучения:</strong>
+                    <span>@Model.CurrentSemestr</span>
+                </div>
+
+                <form class="btn-logout" asp-controller="Account" asp-action="Logout" method="post">
+                    <button type="sumbit" class="btn btn-outline-danger btn-sm"><i
+                            class="fa-solid fa-right-from-bracket"></i> Выйти из аккаунта</button>
+                </form>
+            </div>
+
         </div>
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="admin-box">
+                <h2>Админ панель</h2>
+                <div class="admin-controll">
+                    <form class="admin-controll-item" asp-controller="Admin" asp-action="Index" method="post">
+                        <a href="@Url.Action("Index", "Admin")" class="btn btn-warning ">Управление пользователями</a>
+                    </form>
+                    <form class="admin-controll-item" asp-controller="SpecialityTable" asp-action="Index" method="post">
+                        <a href="@Url.Action("Index", "SpecialityTable")" class="btn btn-primary ">Посмотреть таблицы</a>
+                    </form>
+                    <form class="admin-controll-item" asp-controller="Groups" asp-action="Index" method="post">
+                        <a href="@Url.Action("Index", "Groups")" class="btn btn-info ">Редактировать группы</a>
+                    </form>
+                    <a href="@Url.Action("Index", "UploadExcel")" class="btn btn-success ">Загрузить файл Excel</a>
+                </div>
+            </div>
+        }
     </div>
+
 </div>

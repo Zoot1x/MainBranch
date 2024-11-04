@@ -26,10 +26,16 @@ namespace Project.Areas.Admin.Services
             _specialityRepository.SaveChanges();
         }
 
-        public void UploadExcel(IFormFile file)
+        public bool UploadExcel(IFormFile file)
         {
             var specializations = new List<Speciality>();
-            var year = 2025;
+            var year = DateTime.Now.Year + 1;
+            bool isNewSpecialityAdded = false;
+            if (file == null || file.Length == 0 || !file.FileName.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase))
+            {
+                // Возвращаем false для обозначения ошибки расширения файла
+                return false;
+            }
             using (var stream = new MemoryStream())
             {
                 file.CopyTo(stream);
@@ -50,6 +56,13 @@ namespace Project.Areas.Admin.Services
                             var worksheet = package.Workbook.Worksheets[i];
                             var specialityTitle = $"{worksheet.Name} ({CodeName}, {Year})";
                             var kusrnumber = year - int.Parse(Year);
+
+                            if (_specialityRepository.GetAll().Any(s => s.Title == specialityTitle))
+                            {
+                                // Если такая специальность уже существует, пропускаем добавление
+                                return false;
+                            }
+
                             var disciplines = _disciplineService.ProcessDisciplines(worksheet, 10);
                             var specialization = new Speciality
                             {
@@ -59,12 +72,17 @@ namespace Project.Areas.Admin.Services
                             };
 
                             specializations.Add(specialization);
+                            isNewSpecialityAdded = true;
                         }
                     }
 
-                    _specialityRepository.AddRange(specializations);
-                    _specialityRepository.SaveChanges();
+                    if (specializations.Any())
+                    {
+                        _specialityRepository.AddRange(specializations);
+                        _specialityRepository.SaveChanges();
+                    }
                 }
+                return isNewSpecialityAdded;
             }
         }
     }

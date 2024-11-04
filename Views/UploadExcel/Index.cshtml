@@ -1,9 +1,48 @@
-﻿<form asp-controller="UploadExcel" asp-action="Index" method="post" enctype="multipart/form-data">
-    <input type="file" name="file" />
-    <button type="submit">Загрузить</button>
+﻿@{
+    ViewData["Title"] = "Загрузка Excel";
+}
+<style>
+    .successMessage {
+        margin: 10px 10px 0px 0px;
+    }
+</style>
+<button onclick="history.back()" class="mb-3 mt-3 btn btn-outline-secondary btn-sm"><i
+        class="fa-solid fa-arrow-left"></i> Назад</button>
+<form asp-controller="UploadExcel" asp-action="Index" method="post" enctype="multipart/form-data" id="loadForm">
+    <input type="file" name="file" id="fileInput" />
+    <button class="btn btn-outline-success" type="submit">Загрузить</button>
 </form>
+
+<div class="successMessage">
+    @if (TempData["FileError"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["FileError"]
+        </div>
+    }
+    else if (TempData["SpecialityExists"] != null)
+    {
+        <div class="alert alert-warning" role="alert">
+            @TempData["SpecialityExists"]
+        </div>
+    }
+    else if (TempData["UploadSuccess"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["UploadSuccess"]
+        </div>
+    }
+    else if (TempData["ClearAccess"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["ClearAccess"]
+        </div>
+    }
+</div>
 
 <form asp-controller="UploadExcel" asp-action="ClearTable" method="post">
-    <input type="submit" value="Очистить таблицу" onclick="return confirm('Вы уверены, что хотите очистить таблицу?');" />
+    <button class="btn btn-outline-danger btn-sm" type="submit"
+        onclick="return confirm('Вы уверены, что хотите очистить таблицы парсера?');">
+        Очистить таблицы парсера
+    </button>
 </form>
-

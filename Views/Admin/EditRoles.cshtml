@@ -1,12 +1,15 @@
 @model Project.Areas.Admin.ViewModels.EditRolesViewModel
+@{
+    ViewData["Title"] = $"Редактирование - {@Model.UserName}";
+}
 
-<h2>Редактирование ролей для пользователя @Model.UserName</h2>
+<h2 class="mb-5">Редактирование ролей для пользователя <strong>@Model.UserName</strong></h2>
 
-<form asp-action="UpdateRoles" method="post">
+<form class="edit-col" asp-action="UpdateRoles" method="post">
     <input type="hidden" name="userId" value="@Model.UserId" />
 
     <div class="form-group">
-        <label>Выберите роль:</label>
+        <h5 class="mb-3">Выберите новую роль:</h5>
         <div class="d-flex flex-column">
             @foreach (var role in Model.AllRoles)
             {
@@ -19,7 +22,7 @@
         </div>
     </div>
 
-    <button type="submit" class="btn btn-primary">Обновить роли</button>
+    <button type="submit" class="btn btn-outline-primary mb-3 mt-3">Обновить роли</button>
 </form>
 
-<a asp-action="Index" class="btn btn-secondary">Назад</a>
+<a asp-action="Index" class="btn btn-outline-danger btn-sm ">Назад</a>

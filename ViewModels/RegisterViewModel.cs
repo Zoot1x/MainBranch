@@ -18,7 +18,7 @@ namespace Project.ViewModels
         [Display(Name = "Фамилия")]
         public string? LastName { get; set; }
         [Required]
-        [Display(Name = "Отчетсво")]
+        [Display(Name = "Отчетство")]
         public string? FatherName {get; set;}
 
         [Required]

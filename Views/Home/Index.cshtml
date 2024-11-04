@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@model Project.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Главная";
+}
+<!DOCTYPE html>
 <html lang="ru">
 
 <head>
@@ -9,45 +13,53 @@
     <style>
         .main {
             display: flex;
-            flex-direction: column; /* Вертикальная компоновка */
-            align-items: flex-start; /* Выровнять по левому краю */
-            margin-top: 20px; /* Отступ сверху */
+            flex-direction: column;
+            /* Вертикальная компоновка */
+            align-items: flex-start;
+            /* Выровнять по левому краю */
+            margin-top: 20px;
+            /* Отступ сверху */
         }
 
         .card {
-            width: 100%; /* Ширина карточек */
-            max-width: 300px; /* Максимальная ширина карточки */
-            margin-bottom: 15px; /* Отступ между карточками */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Легкая тень для глубины */
+            width: 100%;
+            /* Ширина карточек */
+            max-width: 500px;
+            /* Максимальная ширина карточки */
+            margin-bottom: 15px;
+            /* Отступ между карточками */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            /* Легкая тень для глубины */
         }
 
         .card-body {
-            padding: 10px; /* Уменьшение отступов внутри карточки */
+            padding: 10px;
+            /* Уменьшение отступов внутри карточки */
+        }
+
+        .userInfo {
+            padding: 10px 15px 10px 15px;
+            margin-bottom: 15px;
+            background-color: rgb(234, 234, 234);
+            border: 2px black solid;
+            border-radius: 8px;
         }
     </style>
 </head>
 
 <body>
     <div class="container main">
-        <h2>Дисциплины для группы</h2>
-
-        @model IEnumerable<Project.Areas.Admin.Models.Parser.Discipline>
-
-        @if (Model != null && Model.Any())
+        <div class="userInfo">
+            <h2><strong>@Model.LastName @Model.Name @Model.FatherName</strong> - список изучаемых дисциплин</h2>
+            <h6 class="subTitle">@Model.GroupNumber учебная группа, @Model.Speciality, @Model.KursNumber курс,
+                @Model.SemesterNumber семестр</h2>
+        </div>
+        @foreach (var discipline in Model.Disciplines)
         {
-            foreach (var discipline in Model)
-            {
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">@discipline.Title</h5>
-                    </div>
+            <div class="card card-item">
+                <div class="card-body">
+                    <h7 class="card-title">@discipline.Title</h7>
                 </div>
-            }
-        }
-        else
-        {
-            <div class="alert alert-warning" role="alert">
-                Дисциплины не найдены.
             </div>
         }
     </div>

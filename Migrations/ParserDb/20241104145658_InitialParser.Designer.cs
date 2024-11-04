@@ -8,10 +8,10 @@ using Project.Data.EF;
 
 #nullable disable
 
-namespace Project.Migrations
+namespace Project.Migrations.ParserDb
 {
     [DbContext(typeof(ParserDbContext))]
-    [Migration("20241103133208_InitialParser")]
+    [Migration("20241104145658_InitialParser")]
     partial class InitialParser
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

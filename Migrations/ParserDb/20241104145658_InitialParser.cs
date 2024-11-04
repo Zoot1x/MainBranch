@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Project.Migrations
+namespace Project.Migrations.ParserDb
 {
     public partial class InitialParser : Migration
     {

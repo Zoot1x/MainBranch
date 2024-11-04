@@ -15,8 +15,16 @@ public class AdminController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string searchString)
     {
+        var usersQuery = _context.Users.AsQueryable(); 
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            usersQuery = usersQuery.Where(u => u.UserName.Contains(searchString));
+        }
+        
+        ViewBag.SearchString = searchString ?? string.Empty;
+
         var users = await _context.Users.ToListAsync(); // Получаем список пользователей из базы данных
         return View(users); // Передаем список пользователей в представление
     }
