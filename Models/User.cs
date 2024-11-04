@@ -10,7 +10,7 @@ namespace Project.Models
         public string? LastName { get; set; }
         public string? FatherName { get; set; }
         public string? Password { get; set; }
-        public int? GroupNumber {get; set;}
+        public int? GroupNumber { get; set; }
         public int? KusrNumber => CalculateKurs();
         public Roles Role { get; set; }
 
@@ -24,22 +24,30 @@ namespace Project.Models
                 int course = (GroupNumber.Value / 10) % 10;
                 DateTime currentDate = DateTime.Now;
 
-                // Определяем семестр на основе курса
-                int semesterNumber =
-                    (course - 1) * 2
-                    + (currentDate >= new DateTime(currentDate.Year, 1, 1) ? 2 : 1);
-                semesterNumber--;
+                // Определяем, какой семестр сейчас
+                int semesterNumber = (course - 1) * 2; // Базовый номер семестра для курса
+
+                // Проверяем дату, чтобы понять, осенний (1 сентября) или весенний (12 января) семестр
+                if (currentDate.Month > 8 || (currentDate.Month == 8 && currentDate.Day >= 1))
+                {
+                    semesterNumber += 1; // Осенний семестр (с 1 сентября до 11 января)
+                }
+                else
+                {
+                    semesterNumber += 2; // Весенний семестр (с 12 января до 31 августа)
+                }
+
                 // Проверяем, не превышает ли семестр 10
                 if (semesterNumber > 10)
                 {
                     return null; // Если семестр больше 10, значит обучение завершено
                 }
 
-                // Возвращаем номер семестра
                 return semesterNumber;
             }
             return null; // Если номер группы недействительный
         }
+
         private int? CalculateKurs()
         {
             if (GroupNumber.HasValue)
